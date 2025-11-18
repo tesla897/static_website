@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Static Website</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="/css/markdown.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>MyWebsite</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#blog" class="nav-link">Blog</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#converter" class="nav-link">Markdown Converter</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">Contact</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Welcome to My Static Website</h1>
+                <p>Built with Node.js, Express, and modern web technologies</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="scrollToSection('blog')">View Blog</button>
+                    <button class="btn btn-secondary" onclick="scrollToSection('converter')">Try Markdown Converter</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Section -->
+        <section id="blog" class="section">
+            <div class="container">
+                <h2 class="section-title">Blog Posts</h2>
+                <div class="blog-grid" id="blog-posts">
+                    <!-- Blog posts will be loaded here -->
+                </div>
+                
+                <!-- Blog Post Template -->
+                <div id="blog-post-template" style="display: none;">
+                    <article class="blog-post">
+                        <div class="blog-post-header">
+                            <h3 class="blog-post-title"></h3>
+                            <div class="blog-post-meta">
+                                <span class="blog-post-date"></span>
+                                <span class="blog-post-author"></span>
+                            </div>
+                        </div>
+                        <div class="blog-post-content markdown-content"></div>
+                        <div class="blog-post-actions">
+                            <button class="btn btn-sm btn-outline" onclick="showMarkdownEditor()">Edit in Markdown</button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Markdown Converter Section -->
+        <section id="converter" class="section converter-section">
+            <div class="container">
+                <h2 class="section-title">Markdown to HTML Converter</h2>
+                <div class="converter-container">
+                    <div class="converter-input">
+                        <h3>Markdown Input</h3>
+                        <textarea id="markdown-input" placeholder="Enter your Markdown here..."></textarea>
+                        <div class="converter-actions">
+                            <button class="btn btn-primary" onclick="convertMarkdown()">Convert to HTML</button>
+                            <button class="btn btn-secondary" onclick="clearMarkdown()">Clear</button>
+                            <button class="btn btn-outline" onclick="loadSampleMarkdown()">Load Sample</button>
+                        </div>
+                    </div>
+                    <div class="converter-output">
+                        <h3>HTML Output</h3>
+                        <div id="html-output" class="html-output">
+                            <p>Converted HTML will appear here...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section contact-section">
+            <div class="container">
+                <h2 class="section-title">Contact Form</h2>
+                <div class="contact-container">
+                    <form id="contact-form" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                    
+                    <div class="contact-info">
+                        <h3>Get in Touch</h3>
+                        <p>Feel free to reach out with any questions or feedback!</p>
+                        <div class="contact-details">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>contact@mywebsite.com</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Your Location</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 My Static Website. Built with Node.js and Express.</p>
+        </div>
+    </footer>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast" style="display: none;">
+        <div class="toast-content">
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/blog.js"></script>
+    <script src="/js/markdown-converter.js"></script>
+    <script src="/js/contact.js"></script>
+</body>
+</html>
