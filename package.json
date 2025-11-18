@@ -1,11 +1,13 @@
 {
   "name": "static-website-node",
   "version": "1.0.0",
-  "description": "A simple static website with landing page, about me, and FAQ sections using Node.js and Express",
+  "description": "A simple static website with landing page, about me, FAQ, and blog sections using Node.js and Express - Netlify Ready",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "build": "echo 'No build step required'",
+    "netlify-build": "echo 'Static site ready for Netlify deployment'"
   },
   "keywords": [
     "nodejs",
@@ -14,6 +16,9 @@
     "landing-page",
     "about",
     "faq",
+    "blog",
+    "markdown",
+    "netlify",
     "static"
   ],
   "author": "",
@@ -27,5 +32,11 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+  "netlify": {
+    "build": {
+      "publish": "public",
+      "functions": "netlify/functions"
+    }
   }
 }
