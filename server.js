@@ -69,9 +69,21 @@ const CONVERTKIT_FORM_ID = process.env.CONVERTKIT_FORM_ID || 'your-form-id';
 
 // Routes
 
-// Home page
+// Pages routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/about', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'about.html'));
+});
+
+app.get('/faq', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'faq.html'));
+});
+
+app.get('/blog', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'blog.html'));
 });
 
 // Blog posts list

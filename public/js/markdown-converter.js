@@ -1,14 +1,12 @@
-// Markdown Converter functionality
-
+// Markdown to HTML Converter
 document.addEventListener('DOMContentLoaded', function() {
-    // Add event listeners for real-time conversion
+    // Add sample markdown if input is empty
     const markdownInput = document.getElementById('markdown-input');
-    if (markdownInput) {
-        markdownInput.addEventListener('input', debounce(convertMarkdown, 500));
+    if (markdownInput && !markdownInput.value.trim()) {
+        loadSampleMarkdown();
     }
 });
 
-// Convert Markdown to HTML
 async function convertMarkdown() {
     const markdownInput = document.getElementById('markdown-input');
     const htmlOutput = document.getElementById('html-output');
@@ -18,38 +16,69 @@ async function convertMarkdown() {
     const markdown = markdownInput.value.trim();
     
     if (!markdown) {
-        htmlOutput.innerHTML = '<p style="color: #6c757d;">Enter some Markdown to convert...</p>';
+        showToast('Please enter some markdown content to convert', 'error');
         return;
     }
     
+    showLoading();
+    
     try {
-        showLoading();
-        
-        const response = await apiCall('/api/convert-markdown', {
+        // Send request to server for markdown conversion
+        const response = await fetch('/api/convert-markdown', {
             method: 'POST',
-            body: JSON.stringify({ markdown: markdown })
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ markdown })
         });
         
-        htmlOutput.innerHTML = response.html;
-        htmlOutput.scrollTop = 0; // Scroll to top of output
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
-        // Add copy functionality to code blocks
-        addCopyButtonsToCodeBlocks();
+        const data = await response.json();
+        htmlOutput.innerHTML = data.html;
+        
+        showToast('Markdown converted successfully!');
         
     } catch (error) {
-        console.error('Failed to convert Markdown:', error);
-        htmlOutput.innerHTML = `
-            <div style="padding: 20px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; color: #721c24;">
-                <strong>Conversion Error:</strong> Failed to convert Markdown to HTML. Please check your syntax.
-            </div>
-        `;
-        showToast('Failed to convert Markdown', 'error');
+        console.error('Conversion error:', error);
+        
+        // Fallback to client-side conversion
+        htmlOutput.innerHTML = convertMarkdownClientSide(markdown);
+        showToast('Converted using client-side parser');
     } finally {
         hideLoading();
     }
 }
 
-// Clear Markdown input and output
+function convertMarkdownClientSide(markdown) {
+    // Client-side markdown conversion as fallback
+    return markdown
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+        .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
+        .replace(/^###### (.*$)/gim, '<h6>$1</h6>')
+        .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+        .replace(/~~(.*?)~~/gim, '<del>$1</del>')
+        .replace(/`([^`]+)`/gim, '<code>$1</code>')
+        .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
+        .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
+        .replace(/^- (.*$)/gim, '<li>$1</li>')
+        .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank">$1</a>')
+        .replace(/!\[([^\]]*)\]\(([^)]+)\)/gim, '<img src="$2" alt="$1" style="max-width: 100%; height: auto;">')
+        .replace(/^---$/gim, '<hr>')
+        .replace(/\n\n/gim, '</p><p>')
+        .replace(/^(?!<[hl]|<p|<li|<blockquote|<pre|<code|<img|<a)/gim, '<p>')
+        .replace(/(<li>.*?<\/li>)/gims, '<ul>$1</ul>')
+        .replace(/(<p><\/p>)/gim, '')
+        .replace(/^(<p>.*<\/p>)$/gim, '$1');
+}
+
 function clearMarkdown() {
     const markdownInput = document.getElementById('markdown-input');
     const htmlOutput = document.getElementById('html-output');
@@ -59,296 +88,141 @@ function clearMarkdown() {
     }
     
     if (htmlOutput) {
-        htmlOutput.innerHTML = '<p style="color: #6c757d;">Converted HTML will appear here...</p>';
+        htmlOutput.innerHTML = '<p>Converted HTML will appear here...</p>';
     }
+    
+    showToast('Cleared markdown input and output');
 }
 
-// Load sample Markdown
 function loadSampleMarkdown() {
-    const sampleMarkdown = `# Markdown Converter Demo
+    const sampleMarkdown = `# Markdown Converter Sample
 
-Welcome to the **Markdown to HTML converter**! This tool helps you convert Markdown text into properly formatted HTML.
+This is a **sample markdown** text to demonstrate the conversion functionality.
 
-## Features
+## Features Supported
 
-- **Real-time conversion** - See results as you type
-- **Support for all standard Markdown syntax**
-- **Code syntax highlighting**
-- **Table support**
-- **Image and link support**
+- **Bold** and *italic* text
+- ~~Strikethrough~~ text
+- \`Inline code\` and code blocks
+- [Links](https://example.com)
+- ![Images](https://via.placeholder.com/150)
 
-### Basic Syntax Examples
+### Code Example
 
-#### Text Formatting
-- **Bold text** using \`**text**\`
-- *Italic text* using \`*text*\`
-- ~~Strikethrough~~ using \`~~text~~\`
-- \`Inline code\` using backticks
+\`\`\`javascript
+function greetUser(name) {
+    return \`Hello, \${name}!\`;
+}
 
-#### Lists
+console.log(greetUser('World'));
+\`\`\`
 
-**Unordered list:**
+### Lists
+
+#### Unordered List
 - Item 1
 - Item 2
-  - Nested item 2a
-  - Nested item 2b
 - Item 3
 
-**Ordered list:**
+#### Ordered List
 1. First step
 2. Second step
 3. Third step
 
-#### Links and Images
-
-Here's a [link to Markdown documentation](https://www.markdownguide.org/).
-
-#### Blockquotes
-
-> "The best way to learn Markdown is by using it."
-> 
-> This is a multi-line blockquote.
-
-#### Code Blocks
-
-Here's some JavaScript code:
-
-\`\`\`javascript
-function convertMarkdown(text) {
-    // Convert Markdown to HTML
-    return text
-        .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')
-        .replace(/\\*(.*?)\\*/g, '<em>$1</em>')
-        .replace(/\\n/g, '<br>');
-}
-\`\`\`
-
-#### Tables
-
-| Feature | Supported | Notes |
-|---------|-----------|-------|
-| Headers | ✅ | Yes |
-| Lists | ✅ | Yes |
-| Links | ✅ | Yes |
-| Images | ✅ | Yes |
-| Tables | ✅ | Yes |
-
-#### Horizontal Rule
+> **Important:** This is a blockquote that can contain important notes or quotes.
 
 ---
 
-#### Inline HTML
+## Table Example
 
-You can also use <strong>HTML</strong> tags directly in your Markdown.
+| Feature | Support | Notes |
+|---------|---------|-------|
+| Headers | ✅ Yes | All levels |
+| Bold/Italic | ✅ Yes | Standard syntax |
+| Code | ✅ Yes | Inline and blocks |
+| Links | ✅ Yes | External links |
+| Images | ✅ Yes | Responsive images |
 
-## Try it out!
+### Blockquote
 
-Edit the Markdown on the left and see the HTML output on the right in real-time!`;
+> "The best way to predict the future is to create it."
+> 
+> - Peter Drucker
 
+**Ready to convert your own markdown?** Simply type your content in the input area and click "Convert to HTML"!`;
+    
     const markdownInput = document.getElementById('markdown-input');
     if (markdownInput) {
         markdownInput.value = sampleMarkdown;
-        convertMarkdown();
+        showToast('Sample markdown loaded');
     }
 }
 
-// Add copy buttons to code blocks
-function addCopyButtonsToCodeBlocks() {
-    const codeBlocks = document.querySelectorAll('#html-output pre code');
-    codeBlocks.forEach(codeBlock => {
-        if (!codeBlock.parentElement.querySelector('.copy-button')) {
-            const copyButton = document.createElement('button');
-            copyButton.className = 'copy-button';
-            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-            copyButton.title = 'Copy code';
-            copyButton.style.cssText = `
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                background: rgba(52, 152, 219, 0.8);
-                color: white;
-                border: none;
-                border-radius: 4px;
-                padding: 5px 10px;
-                cursor: pointer;
-                font-size: 12px;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            `;
-            
-            const preElement = codeBlock.parentElement;
-            preElement.style.position = 'relative';
-            preElement.appendChild(copyButton);
-            
-            // Show button on hover
-            preElement.addEventListener('mouseenter', () => {
-                copyButton.style.opacity = '1';
-            });
-            
-            preElement.addEventListener('mouseleave', () => {
-                copyButton.style.opacity = '0';
-            });
-            
-            // Copy functionality
-            copyButton.addEventListener('click', async () => {
-                try {
-                    await navigator.clipboard.writeText(codeBlock.textContent);
-                    copyButton.innerHTML = '<i class="fas fa-check"></i>';
-                    showToast('Code copied to clipboard!');
-                    
-                    setTimeout(() => {
-                        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-                    }, 2000);
-                } catch (err) {
-                    console.error('Failed to copy code:', err);
-                    showToast('Failed to copy code', 'error');
-                }
-            });
-        }
-    });
-}
-
-// Download converted HTML
-function downloadHTML() {
+function copyHtmlOutput() {
     const htmlOutput = document.getElementById('html-output');
-    if (!htmlOutput || !htmlOutput.innerHTML.trim()) {
-        showToast('No HTML to download', 'error');
+    
+    if (!htmlOutput) {
+        showToast('No HTML output to copy', 'error');
         return;
     }
     
-    const htmlContent = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Converted HTML</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            color: #333;
-        }
-        h1, h2, h3, h4, h5, h6 { color: #2c3e50; }
-        a { color: #3498db; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        code { background-color: #f8f9fa; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New', monospace; }
-        pre { background-color: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 5px; overflow-x: auto; }
-        blockquote { border-left: 4px solid #3498db; padding-left: 20px; margin: 20px 0; font-style: italic; color: #6c757d; background-color: #f8f9fa; padding: 15px 20px; border-radius: 5px; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th, td { border: 1px solid #bdc3c7; padding: 12px; text-align: left; }
-        th { background-color: #ecf0f1; font-weight: 600; }
-    </style>
-</head>
-<body>
-${htmlOutput.innerHTML}
-</body>
-</html>`;
+    const html = htmlOutput.innerHTML;
     
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'converted-html.html';
-    link.click();
-    URL.revokeObjectURL(url);
-    
-    showToast('HTML file downloaded!');
-}
-
-// Copy HTML to clipboard
-async function copyHTML() {
-    const htmlOutput = document.getElementById('html-output');
-    if (!htmlOutput || !htmlOutput.innerHTML.trim()) {
-        showToast('No HTML to copy', 'error');
-        return;
-    }
+    // Create a temporary textarea for copying
+    const tempTextarea = document.createElement('textarea');
+    tempTextarea.value = html;
+    document.body.appendChild(tempTextarea);
+    tempTextarea.select();
+    tempTextarea.setSelectionRange(0, 99999); // For mobile devices
     
     try {
-        await navigator.clipboard.writeText(htmlOutput.innerHTML);
+        document.execCommand('copy');
         showToast('HTML copied to clipboard!');
     } catch (err) {
-        console.error('Failed to copy HTML:', err);
+        console.error('Failed to copy: ', err);
         showToast('Failed to copy HTML', 'error');
+    }
+    
+    document.body.removeChild(tempTextarea);
+}
+
+// Character count for markdown input
+function updateCharacterCount() {
+    const markdownInput = document.getElementById('markdown-input');
+    const htmlOutput = document.getElementById('html-output');
+    
+    if (!markdownInput || !htmlOutput) return;
+    
+    const markdown = markdownInput.value;
+    const charCount = markdown.length;
+    const wordCount = markdown.trim() ? markdown.trim().split(/\s+/).length : 0;
+    
+    // Update character count display if it exists
+    let countDisplay = document.getElementById('character-count');
+    if (!countDisplay) {
+        countDisplay = document.createElement('div');
+        countDisplay.id = 'character-count';
+        countDisplay.className = 'character-count';
+        markdownInput.parentNode.insertBefore(countDisplay, markdownInput.nextSibling);
+    }
+    
+    countDisplay.innerHTML = `<small>${charCount} characters • ${wordCount} words</small>`;
+    
+    // Auto-convert if content is not empty
+    if (markdown.trim() && markdown !== '') {
+        // Debounce conversion to avoid too many requests
+        clearTimeout(this.convertTimeout);
+        this.convertTimeout = setTimeout(() => {
+            convertMarkdown();
+        }, 1000);
     }
 }
 
-// Get Markdown statistics
-function getMarkdownStats() {
+// Add character count listener
+document.addEventListener('DOMContentLoaded', function() {
     const markdownInput = document.getElementById('markdown-input');
-    if (!markdownInput) return null;
-    
-    const content = markdownInput.value;
-    const lines = content.split('\n').length;
-    const characters = content.length;
-    const words = content.split(/\s+/).filter(word => word.length > 0).length;
-    
-    // Count different Markdown elements
-    const headers = (content.match(/^#+\s/gm) || []).length;
-    const links = (content.match(/\[.*?\]\(.*?\)/g) || []).length;
-    const codeBlocks = (content.match(/```[\s\S]*?```/g) || []).length;
-    const images = (content.match(/!\[.*?\]\(.*?\)/g) || []).length;
-    
-    return {
-        lines,
-        characters,
-        words,
-        headers,
-        links,
-        codeBlocks,
-        images
-    };
-}
-
-// Display Markdown statistics
-function showMarkdownStats() {
-    const stats = getMarkdownStats();
-    if (!stats) return;
-    
-    const statsHTML = `
-        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-            <h3 style="margin-top: 0;">Markdown Statistics</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
-                <div><strong>Lines:</strong> ${stats.lines}</div>
-                <div><strong>Words:</strong> ${stats.words}</div>
-                <div><strong>Characters:</strong> ${stats.characters}</div>
-                <div><strong>Headers:</strong> ${stats.headers}</div>
-                <div><strong>Links:</strong> ${stats.links}</div>
-                <div><strong>Code Blocks:</strong> ${stats.codeBlocks}</div>
-                <div><strong>Images:</strong> ${stats.images}</div>
-            </div>
-        </div>
-    `;
-    
-    // Create modal to display stats
-    const modal = document.createElement('div');
-    modal.className = 'stats-modal';
-    modal.innerHTML = `
-        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 2000;">
-            <div style="max-width: 500px; margin: 20px;">
-                ${statsHTML}
-                <button onclick="this.closest('.stats-modal').remove()" style="margin-top: 15px; padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">Close</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Auto remove after 10 seconds
-    setTimeout(() => {
-        if (modal.parentElement) {
-            modal.remove();
-        }
-    }, 10000);
-}
-
-// Export functions for use in HTML onclick handlers
-window.convertMarkdown = convertMarkdown;
-window.clearMarkdown = clearMarkdown;
-window.loadSampleMarkdown = loadSampleMarkdown;
-window.downloadHTML = downloadHTML;
-window.copyHTML = copyHTML;
-window.showMarkdownStats = showMarkdownStats;
+    if (markdownInput) {
+        markdownInput.addEventListener('input', updateCharacterCount);
+        updateCharacterCount(); // Initial count
+    }
+});

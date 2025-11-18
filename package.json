@@ -1,7 +1,7 @@
 {
   "name": "static-website-node",
   "version": "1.0.0",
-  "description": "A static website with Node.js, HTML, CSS, JavaScript and Markdown conversion",
+  "description": "A simple static website with landing page, about me, and FAQ sections using Node.js and Express",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -11,8 +11,10 @@
     "nodejs",
     "express",
     "website",
-    "markdown",
-    "blog"
+    "landing-page",
+    "about",
+    "faq",
+    "static"
   ],
   "author": "",
   "license": "MIT",

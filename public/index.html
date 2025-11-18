@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Static Website</title>
+    <title>Welcome - My Personal Website</title>
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/blog.css">
-    <link rel="stylesheet" href="/css/markdown.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -18,16 +16,16 @@
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a href="#home" class="nav-link">Home</a>
+                    <a href="/" class="nav-link active">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#blog" class="nav-link">Blog</a>
+                    <a href="/about" class="nav-link">About Me</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#converter" class="nav-link">Markdown Converter</a>
+                    <a href="/faq" class="nav-link">FAQ</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#contact" class="nav-link">Contact</a>
+                    <a href="/blog" class="nav-link">Blog</a>
                 </li>
             </ul>
             <div class="hamburger">
@@ -40,64 +38,57 @@
 
     <!-- Main Content -->
     <main>
-        <!-- Home Section -->
-        <section id="home" class="hero">
+        <!-- Hero Section -->
+        <section class="hero">
             <div class="hero-content">
-                <h1>Welcome to My Static Website</h1>
-                <p>Built with Node.js, Express, and modern web technologies</p>
+                <h1>Welcome to My Personal Website</h1>
+                <p>Building simple, clean web experiences with modern technologies</p>
                 <div class="hero-buttons">
-                    <button class="btn btn-primary" onclick="scrollToSection('blog')">View Blog</button>
-                    <button class="btn btn-secondary" onclick="scrollToSection('converter')">Try Markdown Converter</button>
+                    <a href="/about" class="btn btn-primary">Learn About Me</a>
+                    <a href="/faq" class="btn btn-secondary">View FAQ</a>
                 </div>
             </div>
         </section>
 
-        <!-- Blog Section -->
-        <section id="blog" class="section">
+        <!-- Features Section -->
+        <section class="section">
             <div class="container">
-                <h2 class="section-title">Blog Posts</h2>
-                <div class="blog-grid" id="blog-posts">
-                    <!-- Blog posts will be loaded here -->
-                </div>
-                
-                <!-- Blog Post Template -->
-                <div id="blog-post-template" style="display: none;">
-                    <article class="blog-post">
-                        <div class="blog-post-header">
-                            <h3 class="blog-post-title"></h3>
-                            <div class="blog-post-meta">
-                                <span class="blog-post-date"></span>
-                                <span class="blog-post-author"></span>
-                            </div>
+                <h2 class="section-title">What I Offer</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-code"></i>
                         </div>
-                        <div class="blog-post-content markdown-content"></div>
-                        <div class="blog-post-actions">
-                            <button class="btn btn-sm btn-outline" onclick="showMarkdownEditor()">Edit in Markdown</button>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <!-- Markdown Converter Section -->
-        <section id="converter" class="section converter-section">
-            <div class="container">
-                <h2 class="section-title">Markdown to HTML Converter</h2>
-                <div class="converter-container">
-                    <div class="converter-input">
-                        <h3>Markdown Input</h3>
-                        <textarea id="markdown-input" placeholder="Enter your Markdown here..."></textarea>
-                        <div class="converter-actions">
-                            <button class="btn btn-primary" onclick="convertMarkdown()">Convert to HTML</button>
-                            <button class="btn btn-secondary" onclick="clearMarkdown()">Clear</button>
-                            <button class="btn btn-outline" onclick="loadSampleMarkdown()">Load Sample</button>
-                        </div>
+                        <h3>Web Development</h3>
+                        <p>Building modern, responsive websites using HTML, CSS, JavaScript, and Node.js</p>
                     </div>
-                    <div class="converter-output">
-                        <h3>HTML Output</h3>
-                        <div id="html-output" class="html-output">
-                            <p>Converted HTML will appear here...</p>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-pencil-ruler"></i>
                         </div>
+                        <h3>Clean Design</h3>
+                        <p>Creating user-friendly interfaces with a focus on simplicity and usability</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3>Performance</h3>
+                        <p>Optimizing websites for speed, accessibility, and search engine visibility</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section class="section cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>Ready to Get Started?</h2>
+                    <p>Check out my blog for tutorials and insights, or get in touch to discuss your next project.</p>
+                    <div class="cta-buttons">
+                        <a href="/blog" class="btn btn-primary">View Blog</a>
+                        <a href="#contact" class="btn btn-outline">Contact Me</a>
                     </div>
                 </div>
             </div>
@@ -106,7 +97,7 @@
         <!-- Contact Section -->
         <section id="contact" class="section contact-section">
             <div class="container">
-                <h2 class="section-title">Contact Form</h2>
+                <h2 class="section-title">Get In Touch</h2>
                 <div class="contact-container">
                     <form id="contact-form" class="contact-form">
                         <div class="form-group">
@@ -125,16 +116,20 @@
                     </form>
                     
                     <div class="contact-info">
-                        <h3>Get in Touch</h3>
-                        <p>Feel free to reach out with any questions or feedback!</p>
+                        <h3>Let's Connect</h3>
+                        <p>I'd love to hear from you! Whether you have a project in mind, want to collaborate, or just want to say hello.</p>
                         <div class="contact-details">
                             <div class="contact-item">
                                 <i class="fas fa-envelope"></i>
-                                <span>contact@mywebsite.com</span>
+                                <span>hello@mywebsite.com</span>
                             </div>
                             <div class="contact-item">
                                 <i class="fas fa-map-marker-alt"></i>
-                                <span>Your Location</span>
+                                <span>Available Worldwide</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fab fa-github"></i>
+                                <span>github.com/myusername</span>
                             </div>
                         </div>
                     </div>
@@ -146,7 +141,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 My Static Website. Built with Node.js and Express.</p>
+            <p>&copy; 2025 My Personal Website. Built with ❤️ using Node.js and Express.</p>
         </div>
     </footer>
 
@@ -163,8 +158,6 @@
     </div>
 
     <script src="/js/main.js"></script>
-    <script src="/js/blog.js"></script>
-    <script src="/js/markdown-converter.js"></script>
     <script src="/js/contact.js"></script>
 </body>
 </html>

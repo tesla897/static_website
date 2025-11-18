@@ -1,466 +1,362 @@
 // Blog functionality
-let currentPosts = [];
-let currentReadingPost = null;
-
 document.addEventListener('DOMContentLoaded', function() {
     loadBlogPosts();
 });
 
-// Load and display blog posts
-async function loadBlogPosts() {
-    try {
-        showLoading();
-        const response = await apiCall('/api/posts');
-        currentPosts = response;
-        displayBlogPosts(response);
-    } catch (error) {
-        console.error('Failed to load blog posts:', error);
-        showToast('Failed to load blog posts', 'error');
-        displayEmptyBlog();
-    } finally {
-        hideLoading();
-    }
+// Sample blog posts data (in a real app, this would come from an API)
+const blogPosts = [
+    {
+        id: 1,
+        title: "Getting Started with Web Development",
+        content: `# Getting Started with Web Development
+
+Welcome to my first blog post! Today I'll share some insights about getting started with web development.
+
+## What You'll Need
+
+To begin your journey in web development, you'll need:
+
+### 1. **HTML (HyperText Markup Language)**
+HTML is the backbone of every web page. It provides the structure and content.
+
+\`\`\`html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My First Webpage</title>
+</head>
+<body>
+    <h1>Hello World!</h1>
+    <p>This is my first webpage.</p>
+</body>
+</html>
+\`\`\`
+
+### 2. **CSS (Cascading Style Sheets)**
+CSS brings your web pages to life with colors, layouts, and animations.
+
+> **Pro Tip:** Start with the basics - fonts, colors, and spacing.
+
+### 3. **JavaScript**
+JavaScript adds interactivity and dynamic behavior to your websites.
+
+\`\`\`javascript
+function greetUser(name) {
+    return \`Hello, \${name}! Welcome to my website.\`;
 }
 
-// Display blog posts in the grid
-function displayBlogPosts(posts) {
-    const blogPostsContainer = document.getElementById('blog-posts');
-    
-    if (!blogPostsContainer) return;
-    
-    if (!posts || posts.length === 0) {
-        displayEmptyBlog();
-        return;
+console.log(greetUser('Developer'));
+\`\`\`
+
+## Recommended Learning Path
+
+1. **Start with HTML** - Learn the structure
+2. **Add CSS** - Make it beautiful
+3. **Learn JavaScript** - Add interactivity
+4. **Practice** - Build small projects
+5. **Keep Learning** - Technology evolves!
+
+## Resources
+
+- [MDN Web Docs](https://developer.mozilla.org/) - Excellent documentation
+- [freeCodeCamp](https://www.freecodecamp.org/) - Free interactive tutorials
+- [CSS-Tricks](https://css-tricks.com/) - CSS tips and tricks
+
+## Final Thoughts
+
+Remember, **practice makes perfect**. Don't be afraid to experiment and break things - that's how you learn!
+
+> "The only way to learn web development is by building websites."
+
+Thanks for reading, and happy coding! 🚀`,
+        excerpt: "Learn the fundamentals of web development with this comprehensive guide covering HTML, CSS, and JavaScript basics.",
+        date: "2025-11-15",
+        author: "Web Developer"
+    },
+    {
+        id: 2,
+        title: "Building Responsive Websites with CSS Grid",
+        content: `# Building Responsive Websites with CSS Grid
+
+CSS Grid is a powerful layout system that makes creating responsive designs much easier than before.
+
+## What is CSS Grid?
+
+CSS Grid is a two-dimensional layout system that allows you to arrange content in rows and columns.
+
+\`\`\`css
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+.grid-item {
+    background: #f0f0f0;
+    padding: 20px;
+    border-radius: 8px;
+}
+\`\`\`
+
+## Basic Grid Properties
+
+### Grid Container
+- \`display: grid\`
+- \`grid-template-columns\`
+- \`grid-template-rows\`
+- \`gap\`
+
+### Grid Items
+- \`grid-column\`
+- \`grid-row\`
+
+## Responsive Design Example
+
+\`\`\`css
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
     }
+}
+\`\`\`
+
+> **Note:** Always consider mobile users first!
+
+## Browser Support
+
+CSS Grid is supported in all modern browsers:
+- Chrome 57+
+- Firefox 52+
+- Safari 10.1+
+- Edge 16+
+
+## Conclusion
+
+CSS Grid makes complex layouts much simpler. Start using it in your projects today!
+
+*Happy coding!* 💻`,
+        excerpt: "Discover how CSS Grid can simplify your responsive web design workflow with practical examples and best practices.",
+        date: "2025-11-12",
+        author: "Frontend Developer"
+    },
+    {
+        id: 3,
+        title: "JavaScript Promises: A Beginner's Guide",
+        content: `# JavaScript Promises: A Beginner's Guide
+
+Understanding promises is crucial for modern JavaScript development. Let's break it down!
+
+## What is a Promise?
+
+A Promise is an object representing the eventual completion or failure of an asynchronous operation.
+
+\`\`\`javascript
+const myPromise = new Promise((resolve, reject) => {
+    // Async operation here
+    const success = true;
     
-    blogPostsContainer.innerHTML = '';
-    
-    posts.forEach(post => {
-        const postElement = createBlogPostElement(post);
-        blogPostsContainer.appendChild(postElement);
+    if (success) {
+        resolve("Operation completed successfully!");
+    } else {
+        reject("Operation failed!");
+    }
+});
+\`\`\`
+
+## Promise States
+
+A promise can be in one of three states:
+- **Pending** - Initial state
+- **Fulfilled** - Operation completed successfully
+- **Rejected** - Operation failed
+
+## Using Promises
+
+### The \`then()\` Method
+\`\`\`javascript
+myPromise
+    .then(result => {
+        console.log(result); // "Operation completed successfully!"
+    })
+    .catch(error => {
+        console.error(error); // "Operation failed!"
     });
-}
+\`\`\`
 
-// Create individual blog post element
-function createBlogPostElement(post) {
-    const postElement = document.createElement('div');
-    postElement.className = 'blog-post';
-    postElement.innerHTML = `
-        <div class="blog-post-header">
-            <h3 class="blog-post-title">${escapeHtml(post.title)}</h3>
-            <div class="blog-post-meta">
-                <span class="blog-post-date">${formatDate(post.date)}</span>
-                <span class="blog-post-author">by ${escapeHtml(post.author)}</span>
-            </div>
-        </div>
-        <div class="blog-post-content markdown-content">
-                ${post.content.substring(0, 300)}${post.content.length > 300 ? '...' : ''}
-        </div>
-        <div class="blog-post-actions">
-            <button class="btn btn-sm btn-outline" onclick="readFullPost(${post.id})">
-                <i class="fas fa-book-open"></i> Read More
-            </button>
-            <button class="btn btn-sm btn-primary" onclick="showMarkdownEditor(${post.id})">
-                <i class="fas fa-edit"></i> Edit
-            </button>
-        </div>
-    `;
-    
-    return postElement;
-}
-
-// Display empty blog state
-function displayEmptyBlog() {
-    const blogPostsContainer = document.getElementById('blog-posts');
-    if (blogPostsContainer) {
-        blogPostsContainer.innerHTML = `
-            <div class="blog-empty">
-                <i class="fas fa-blog"></i>
-                <h3>No blog posts yet</h3>
-                <p>Start writing your first blog post using the Markdown converter below!</p>
-                <button class="btn btn-primary" onclick="scrollToSection('converter')">
-                    Create Your First Post
-                </button>
-            </div>
-        `;
+### Async/Await (Modern Approach)
+\`\`\`javascript
+async function fetchData() {
+    try {
+        const result = await myPromise;
+        console.log(result);
+    } catch (error) {
+        console.error(error);
     }
 }
+\`\`\`
 
-// Read full blog post
-function readFullPost(postId) {
-    const post = currentPosts.find(p => p.id === postId);
-    if (!post) {
-        showToast('Post not found', 'error');
-        return;
+## Real-World Example: Fetching Data
+
+\`\`\`javascript
+async function getUserData(userId) {
+    try {
+        const response = await fetch(\`/api/users/\${userId}\`);
+        const userData = await response.json();
+        return userData;
+    } catch (error) {
+        console.error('Failed to fetch user data:', error);
+        throw error;
     }
-    
-    currentReadingPost = post;
-    
-    // Create reading mode view
+}
+\`\`\`
+
+## Best Practices
+
+1. **Always handle errors** - Use \`.catch()\` or try/catch
+2. **Chain promises properly** - Return promises in \`.then()\`
+3. **Use async/await** for better readability
+
+## Conclusion
+
+Promises are fundamental to asynchronous JavaScript. Master them, and you'll write much cleaner code!
+
+> "Promises are the path to asynchronous enlightenment." 🌟`,
+        excerpt: "Learn the fundamentals of JavaScript promises, including syntax, states, and real-world usage patterns for better async code.",
+        date: "2025-11-10",
+        author: "JavaScript Developer"
+    }
+];
+
+async function loadBlogPosts() {
     const blogPostsContainer = document.getElementById('blog-posts');
-    blogPostsContainer.innerHTML = `
-        <a href="#" class="back-to-blog" onclick="backToBlogList()">
-            <i class="fas fa-arrow-left"></i> Back to Blog List
-        </a>
+    const template = document.getElementById('blog-post-template');
+    
+    if (!blogPostsContainer || !template) return;
+    
+    // Show loading state
+    blogPostsContainer.innerHTML = '<div class="loading-posts">Loading posts...</div>';
+    
+    try {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-        <article class="blog-post reading-mode">
-            <div class="blog-post-header">
-                <h1 class="blog-post-title">${escapeHtml(post.title)}</h1>
-                <div class="blog-post-meta">
-                    <span class="blog-post-date">${formatDate(post.date)}</span>
-                    <span class="blog-post-author">by ${escapeHtml(post.author)}</span>
-                </div>
-            </div>
-            <div class="blog-post-content markdown-content">
-                ${post.content}
-            </div>
-            <div class="blog-post-actions">
-                <button class="btn btn-outline" onclick="showMarkdownEditor(${post.id}, true)">
-                    <i class="fas fa-edit"></i> Edit This Post
-                </button>
-                <button class="btn btn-secondary" onclick="copyPostContent(${post.id})">
-                    <i class="fas fa-copy"></i> Copy Content
-                </button>
-            </div>
-        </article>
-    `;
-    
-    // Smooth scroll to blog section
-    scrollToSection('blog');
+        // Clear loading state
+        blogPostsContainer.innerHTML = '';
+        
+        // Create blog post cards
+        blogPosts.forEach(post => {
+            const postCard = template.cloneNode(true);
+            postCard.style.display = 'block';
+            postCard.id = `post-${post.id}`;
+            
+            // Populate post data
+            postCard.querySelector('.blog-post-title').textContent = post.title;
+            postCard.querySelector('.blog-post-date').textContent = formatDate(post.date);
+            postCard.querySelector('.blog-post-author').textContent = `By ${post.author}`;
+            postCard.querySelector('.blog-post-excerpt').innerHTML = `<p>${post.excerpt}</p>`;
+            
+            // Add click handler for read more
+            postCard.querySelector('.read-more-btn').addEventListener('click', () => {
+                showFullPost(post);
+            });
+            
+            // Add click handler for markdown converter
+            postCard.querySelector('.markdown-converter-link').addEventListener('click', () => {
+                scrollToMarkdownConverter();
+            });
+            
+            blogPostsContainer.appendChild(postCard);
+        });
+        
+    } catch (error) {
+        console.error('Error loading blog posts:', error);
+        blogPostsContainer.innerHTML = '<p class="error">Failed to load blog posts. Please try again later.</p>';
+    }
 }
 
-// Back to blog list view
-function backToBlogList() {
-    currentReadingPost = null;
-    displayBlogPosts(currentPosts);
-}
-
-// Show Markdown editor for creating/editing posts
-function showMarkdownEditor(postId = null, isEditMode = false) {
-    const post = postId ? currentPosts.find(p => p.id === postId) : null;
-    
-    // Create modal for markdown editor
+function showFullPost(post) {
+    // Create modal or new page for full post
     const modal = document.createElement('div');
-    modal.className = 'markdown-editor-modal';
+    modal.className = 'post-modal';
     modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>${isEditMode ? 'Edit Blog Post' : 'Create New Blog Post'}</h3>
-                <button class="modal-close" onclick="closeMarkdownEditor()">&times;</button>
+        <div class="post-modal-content">
+            <div class="post-modal-header">
+                <h2>${post.title}</h2>
+                <span class="close-modal">&times;</span>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="post-title">Title</label>
-                    <input type="text" id="post-title" value="${post ? escapeHtml(post.title) : ''}" 
-                           placeholder="Enter post title..." required>
-                </div>
-                <div class="form-group">
-                    <label for="post-author">Author</label>
-                    <input type="text" id="post-author" value="${post ? escapeHtml(post.author) : 'Admin'}" 
-                           placeholder="Author name..." required>
-                </div>
-                <div class="converter-container">
-                    <div class="converter-input">
-                        <h3>Markdown Content</h3>
-                        <textarea id="post-markdown" placeholder="Write your blog post in Markdown...">${post ? post.content : ''}</textarea>
-                        <div class="converter-actions">
-                            <button class="btn btn-primary" onclick="previewPostMarkdown()">
-                                <i class="fas fa-eye"></i> Preview
-                            </button>
-                            <button class="btn btn-outline" onclick="loadSampleBlogMarkdown()">
-                                <i class="fas fa-file-alt"></i> Load Sample
-                            </button>
-                        </div>
-                    </div>
-                    <div class="converter-output">
-                        <h3>Preview</h3>
-                        <div id="post-preview" class="html-output markdown-content">
-                            <p>Preview will appear here...</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="post-modal-meta">
+                <span>${formatDate(post.date)}</span>
+                <span>By ${post.author}</span>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeMarkdownEditor()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveBlogPost(${post ? post.id : 'null'})">
-                    <i class="fas fa-save"></i> ${isEditMode ? 'Update' : 'Create'} Post
-                </button>
+            <div class="post-modal-body markdown-content">
+                ${convertMarkdownToHtml(post.content)}
+            </div>
+            <div class="post-modal-footer">
+                <button class="btn btn-secondary close-modal">Close</button>
             </div>
         </div>
     `;
     
     document.body.appendChild(modal);
     
-    // Add modal styles
-    const modalStyles = `
-        .markdown-editor-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-        
-        .modal-content {
-            background-color: white;
-            border-radius: 10px;
-            max-width: 90vw;
-            max-height: 90vh;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        .modal-header h3 {
-            margin: 0;
-            color: #2c3e50;
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #6c757d;
-            padding: 5px;
-        }
-        
-        .modal-close:hover {
-            color: #333;
-        }
-        
-        .modal-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            padding: 20px;
-            border-top: 1px solid #e9ecef;
-            background-color: #f8f9fa;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-        
-        #post-markdown {
-            width: 100%;
-            min-height: 300px;
-            padding: 15px;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            resize: vertical;
-        }
-        
-        #post-preview {
-            min-height: 300px;
-            padding: 15px;
-            border: 1px solid #e9ecef;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-            overflow-y: auto;
-        }
-    `;
-    
-    // Add styles if not already added
-    if (!document.querySelector('#modal-styles')) {
-        const styleSheet = document.createElement('style');
-        styleSheet.id = 'modal-styles';
-        styleSheet.textContent = modalStyles;
-        document.head.appendChild(styleSheet);
-    }
-    
-    // Scroll to editor
-    setTimeout(() => {
-        modal.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-}
-
-// Close Markdown editor
-function closeMarkdownEditor() {
-    const modal = document.querySelector('.markdown-editor-modal');
-    if (modal) {
-        modal.remove();
-    }
-}
-
-// Preview post markdown
-async function previewPostMarkdown() {
-    const markdownContent = document.getElementById('post-markdown').value;
-    const previewElement = document.getElementById('post-preview');
-    
-    if (!markdownContent.trim()) {
-        previewElement.innerHTML = '<p style="color: #6c757d;">Enter some Markdown to see preview...</p>';
-        return;
-    }
-    
-    try {
-        const response = await apiCall('/api/convert-markdown', {
-            method: 'POST',
-            body: JSON.stringify({ markdown: markdownContent })
+    // Handle modal close
+    modal.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.body.removeChild(modal);
         });
-        
-        previewElement.innerHTML = response.html;
-    } catch (error) {
-        console.error('Failed to preview markdown:', error);
-        previewElement.innerHTML = '<p style="color: #e74c3c;">Failed to generate preview</p>';
-    }
-}
-
-// Load sample blog markdown
-function loadSampleBlogMarkdown() {
-    const sampleMarkdown = `# Welcome to My New Blog Post!
-
-This is a sample blog post to get you started with Markdown.
-
-## What you can do with Markdown
-
-- **Bold text** for emphasis
-- *Italic text* for subtle emphasis
-- \`Code snippets\` for technical content
-- [Links](https://example.com) for references
-
-### Code Examples
-
-Here's some JavaScript code:
-
-\`\`\`javascript
-function greetUser(name) {
-    return \`Hello, \${name}! Welcome to my blog.\`;
-}
-
-console.log(greatUser('Reader'));
-\`\`\`
-
-### Blockquotes
-
-> "The best way to learn is by doing. Start writing your own blog posts today!"
-
-### Lists
-
-My favorite programming languages:
-1. JavaScript
-2. Python  
-3. Java
-4. TypeScript
-
-### Images
-
-You can also add images to make your posts more engaging!
-
-Happy writing! 🚀`;
-
-    const markdownTextarea = document.getElementById('post-markdown');
-    if (markdownTextarea) {
-        markdownTextarea.value = sampleMarkdown;
-        previewPostMarkdown();
-    }
-}
-
-// Save blog post
-async function saveBlogPost(postId = null) {
-    const title = document.getElementById('post-title').value.trim();
-    const author = document.getElementById('post-author').value.trim() || 'Admin';
-    const content = document.getElementById('post-markdown').value.trim();
+    });
     
-    if (!title || !content) {
-        showToast('Please fill in all required fields', 'error');
-        return;
-    }
+    // Close on outside click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            document.body.removeChild(modal);
+        }
+    });
     
-    try {
-        showLoading();
-        
-        const method = postId ? 'PUT' : 'POST';
-        const url = postId ? `/api/posts/${postId}` : '/api/posts';
-        
-        const response = await apiCall(url, {
-            method: method,
-            body: JSON.stringify({ title, author, content })
-        });
-        
-        showToast(postId ? 'Post updated successfully!' : 'Post created successfully!');
-        closeMarkdownEditor();
-        
-        // Reload blog posts
-        await loadBlogPosts();
-        
-    } catch (error) {
-        console.error('Failed to save post:', error);
-        showToast('Failed to save post', 'error');
-    } finally {
-        hideLoading();
+    // Convert markdown to HTML
+    convertMarkdownToHtmlInElement(modal.querySelector('.post-modal-body'));
+}
+
+function scrollToMarkdownConverter() {
+    const converter = document.querySelector('.converter-section');
+    if (converter) {
+        converter.scrollIntoView({ behavior: 'smooth' });
     }
 }
 
-// Copy post content
-function copyPostContent(postId) {
-    const post = currentPosts.find(p => p.id === postId);
-    if (post) {
-        copyToClipboard(post.content);
-    }
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
 }
 
-// Delete blog post (bonus functionality)
-async function deleteBlogPost(postId) {
-    if (!confirm('Are you sure you want to delete this post?')) {
-        return;
-    }
-    
-    try {
-        showLoading();
-        
-        await apiCall(`/api/posts/${postId}`, {
-            method: 'DELETE'
-        });
-        
-        showToast('Post deleted successfully!');
-        await loadBlogPosts();
-        
-    } catch (error) {
-        console.error('Failed to delete post:', error);
-        showToast('Failed to delete post', 'error');
-    } finally {
-        hideLoading();
-    }
+function convertMarkdownToHtml(markdown) {
+    // Simple markdown to HTML conversion
+    // In a real app, you'd use a proper markdown library
+    return markdown
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+        .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+        .replace(/`([^`]+)`/gim, '<code>$1</code>')
+        .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
+        .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
+        .replace(/^- (.*$)/gim, '<li>$1</li>')
+        .replace(/\n\n/gim, '</p><p>')
+        .replace(/^(.*)$/gim, '<p>$1</p>')
+        .replace(/<p><\/p>/gim, '')
+        .replace(/<p>(<li>.*?<\/li>)<\/p>/gim, '<ul>$1</ul>')
+        .replace(/<p>(<h[1-6]>.*?<\/h[1-6]>)<\/p>/gim, '$1')
+        .replace(/<p>(<blockquote>.*?<\/blockquote>)<\/p>/gim, '$1')
+        .replace(/<p>(<pre>.*?<\/pre>)<\/p>/gim, '$1');
+}
+
+function convertMarkdownToHtmlInElement(element) {
+    const markdown = element.textContent;
+    element.innerHTML = convertMarkdownToHtml(markdown);
 }
