@@ -1,0 +1,10 @@
+# SPA redirects for client-side routing
+/about   /index.html   200
+/faq     /index.html   200
+/blog    /index.html   200
+
+# API routes should not be redirected (they're handled by Netlify Functions)
+/api/*   /.netlify/functions/api   200
+
+# Health check endpoint
+/health  /.netlify/functions/api   200

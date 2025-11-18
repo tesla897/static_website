@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - My Personal Website</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/markdown.css">
+    <link rel="stylesheet" href="/css/blog.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>MyWebsite</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about" class="nav-link">About Me</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/faq" class="nav-link">FAQ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/blog" class="nav-link active">Blog</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Blog</h1>
+                <p>Insights, tutorials, and thoughts on web development and technology</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div class="blog-container">
+                    <!-- Blog Posts Grid -->
+                    <div class="blog-posts" id="blog-posts">
+                        <!-- Blog posts will be loaded here by JavaScript -->
+                    </div>
+                    
+                    <!-- Blog Post Template (Hidden) -->
+                    <article class="blog-post-card" style="display: none;" id="blog-post-template">
+                        <div class="blog-post-header">
+                            <h3 class="blog-post-title"></h3>
+                            <div class="blog-post-meta">
+                                <span class="blog-post-date"></span>
+                                <span class="blog-post-author"></span>
+                            </div>
+                        </div>
+                        <div class="blog-post-excerpt markdown-content"></div>
+                        <div class="blog-post-footer">
+                            <button class="btn btn-primary read-more-btn">Read More</button>
+                            <a href="#" class="btn btn-outline markdown-converter-link">Markdown Converter</a>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Markdown Converter Section -->
+                <div class="converter-section">
+                    <h2>Markdown to HTML Converter</h2>
+                    <p>Convert your markdown content to HTML for use in blog posts or web pages.</p>
+                    
+                    <div class="converter-container">
+                        <div class="converter-input">
+                            <h3>Markdown Input</h3>
+                            <textarea id="markdown-input" placeholder="Enter your Markdown here..."></textarea>
+                            <div class="converter-actions">
+                                <button class="btn btn-primary" onclick="convertMarkdown()">Convert to HTML</button>
+                                <button class="btn btn-secondary" onclick="clearMarkdown()">Clear</button>
+                                <button class="btn btn-outline" onclick="loadSampleMarkdown()">Load Sample</button>
+                                <button class="btn btn-outline" onclick="copyHtmlOutput()">Copy HTML</button>
+                            </div>
+                        </div>
+                        <div class="converter-output">
+                            <h3>HTML Output</h3>
+                            <div id="html-output" class="html-output">
+                                <p>Converted HTML will appear here...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 My Personal Website. Built with ❤️ using Node.js and Express.</p>
+        </div>
+    </footer>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast" style="display: none;">
+        <div class="toast-content">
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/blog.js"></script>
+    <script src="/js/markdown-converter.js"></script>
+</body>
+</html>
